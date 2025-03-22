@@ -567,7 +567,7 @@ static void hci_num_completed_packets(struct net_buf *buf)
 	int i;
 
 	if (sizeof(*evt) + sizeof(evt->h[0]) * evt->num_handles > buf->len) {
-		LOG_ERR("evt num_handles (=%u) too large (%u > %u)",
+		LOG_ERR("evt num_handles (=%u) too large (%zu > %u)",
 			evt->num_handles,
 			sizeof(*evt) + sizeof(evt->h[0]) * evt->num_handles,
 			buf->len);
@@ -2271,6 +2271,17 @@ static void hci_encrypt_key_refresh_complete(struct net_buf *buf)
 		if (!bt_br_update_sec_level(conn)) {
 			bt_conn_unref(conn);
 			return;
+		}
+
+		if (IS_ENABLED(CONFIG_BT_SMP)) {
+			/*
+			 * Start SMP over BR/EDR if we are pairing and are
+			 * central on the link
+			 */
+			if (atomic_test_bit(conn->flags, BT_CONN_BR_PAIRED) &&
+			    conn->role == BT_CONN_ROLE_CENTRAL) {
+				bt_smp_br_send_pairing_req(conn);
+			}
 		}
 	}
 #endif /* CONFIG_BT_CLASSIC */
@@ -4541,7 +4552,7 @@ int bt_le_get_local_features(struct bt_le_local_features *remote_info)
 	return 0;
 }
 
-bool bt_addr_le_is_bonded(uint8_t id, const bt_addr_le_t *addr)
+bool bt_le_bond_exists(uint8_t id, const bt_addr_le_t *addr)
 {
 	if (IS_ENABLED(CONFIG_BT_SMP)) {
 		struct bt_keys *keys = bt_keys_find_addr(id, addr);
