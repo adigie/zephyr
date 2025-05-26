@@ -160,8 +160,4 @@ void openthread_mutex_unlock(void);
 }
 #endif
 
-/**
- * @}
- */
-
 #endif /* ZEPHYR_MODULES_OPENTHREAD_OPENTHREAD_H_ */
