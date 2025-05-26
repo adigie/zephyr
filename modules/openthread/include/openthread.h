@@ -24,7 +24,7 @@ extern "C" {
  * @param message The message to receive.
  * @param context The context to pass to the callback.
  */
-typedef void (*openthread_receive_cb)(otMessage *message, void *context);
+typedef void (*openthread_receive_cb)(struct otMessage *message, void *context);
 
 /** OpenThread state change callback  */
 
