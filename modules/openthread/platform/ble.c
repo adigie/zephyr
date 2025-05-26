@@ -19,8 +19,7 @@
 #include <zephyr/bluetooth/uuid.h>
 #include <zephyr/bluetooth/gatt.h>
 
-/* Zephyr OpenThread integration Library */
-#include <zephyr/net/openthread.h>
+#include <openthread.h>
 
 /* OpenThread BLE driver API */
 #include <openthread/error.h>
